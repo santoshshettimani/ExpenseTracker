@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container py-5">
+
+    <h1 class="text-center mb-2">Expense Tracker</h1>
+    <p class="text-center text-muted mb-5">
+        Manage your income and expenses easily
+    </p>
+
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="summary income">
+                <h5>Total Income</h5>
+                <h2>₹{{ "%.2f"|format(income) }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="summary expense">
+                <h5>Total Expenses</h5>
+                <h2>₹{{ "%.2f"|format(expense) }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="summary balance">
+                <h5>Remaining Balance</h5>
+                <h2>₹{{ "%.2f"|format(balance) }}</h2>
+            </div>
+        </div>
+
+    </div>
+
+    
+    
+    
+
+
+
+    <!-- Add Transaction -->
+    <div class="card p-4 mb-4">
+        <h4 class="mb-3">Add New Transaction</h4>
+
+        <form action="/add" method="POST">
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <input type="text" name="title"
+                           class="form-control"
+                           placeholder="Transaction name" required>
+                </div>
+
+                <div class="col-md-2">
+                    <input type="number" name="amount"
+                           class="form-control"
+                           placeholder="Amount"
+                           min="0.01" step="0.01" required>
+                </div>
+
+                <div class="col-md-3">
+                    <select name="category" class="form-select" required>
+                        <option value="">Select Category</option>
+                        <option>Food</option>
+                        <option>Travel</option>
+                        <option>Shopping</option>
+                        <option>Education</option>
+                        <option>Salary</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select name="type" class="form-select" required>
+                        <option value="Income">Income</option>
+                        <option value="Expense">Expense</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        Add
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    
+    <!-- Expense Analytics -->
+    <div class="card p-4 mb-4">
+        <h4 class="mb-3">Expense Analytics</h4>
+
+        <div style="max-width: 450px; margin: auto;">
+            <canvas id="expenseChart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+    const categoryData = {{ category_data | tojson }};
+
+    const labels = categoryData.map(item => item.category);
+    const values = categoryData.map(item => item.total);
+
+    new Chart(document.getElementById('expenseChart'), {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Expenses',
+                data: values,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Expenses by Category'
+                }
+            }
+        }
+    });
+    </script>
+
+
+    <!-- Transaction History -->
+    <div class="card p-4">
+        <h4 class="mb-3">Transaction History</h4>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Amount</th>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in expenses %}
+                    <tr>
+                        <td>{{ item.title }}</td>
+                        <td>₹{{ "%.2f"|format(item.amount) }}</td>
+                        <td>{{ item.category }}</td>
+                        <td>
+                            <span class="badge {{ 'bg-success' if item.type == 'Income' else 'bg-danger' }}">
+                                {{ item.type }}
+                            </span>
+                        </td>
+                        <td>
+                            <form action="/delete/{{ item.id }}" method="GET"
+                                  onsubmit="return confirm('Delete this transaction?')">
+                                <button class="btn btn-sm btn-outline-danger">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            No transactions added yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

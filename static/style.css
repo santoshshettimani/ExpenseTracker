@@ -1,0 +1,60 @@
+
+body {
+    background: #f4f6fb;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    color: #202b45;
+    font-weight: 700;
+}
+
+.summary {
+    padding: 25px;
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.income {
+    background: #198754;
+}
+
+.expense {
+    background: #dc3545;
+}
+
+.balance {
+    background: #3157c8;
+}
+
+.summary h5 {
+    margin-bottom: 15px;
+}
+
+.summary h2 {
+    font-weight: bold;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.form-control, .form-select {
+    padding: 11px;
+}
+
+.btn-primary {
+    background: #3157c8;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #203f9d;
+}
+
+table {
+    vertical-align: middle;
+}
