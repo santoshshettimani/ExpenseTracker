@@ -17,6 +17,7 @@ def create_database():
     """)
     conn.commit()
     conn.close()
+create_database()
 
 @app.route("/")
 def home():
